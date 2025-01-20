@@ -19,7 +19,7 @@ except FileNotFoundError:
 # Convert ARFF data to a Pandas DataFrame
 df = pd.DataFrame(data)
 
-# Ensure proper encoding of nominal attributes (if necessary)
+# Ensure proper encoding of nominal attributes
 for column in df.select_dtypes([object]).columns:
     df[column] = df[column].str.decode('utf-8')
 
@@ -54,12 +54,12 @@ y = y[X_numeric.index]
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X_numeric)
 
-# Configure the base learner as RandomTree equivalent
+# Configure the base learner
 random_tree = DecisionTreeClassifier(
-    max_features=None,             # Use all features for splits (-K 0)
-    min_samples_split=2,           # Minimum number of instances per split (-M 1.0)
-    min_impurity_decrease=0.001,   # Matches -V 0.001
-    random_state=1                 # Consistent with Weka (-S 1)
+    max_features=None,
+    min_samples_split=2,
+    min_impurity_decrease=0.001,
+    random_state=1
 )
 
 # Initialize the Bagging classifier with the RandomTree as the base learner
@@ -115,7 +115,7 @@ print(f"Root relative squared error              {root_relative_squared_error:.4
 print(f"Total Number of Instances              {len(y)}")
 
 
-# Print metrics 
+# Print metrics
 print(f"                 TP Rate: {TP_rate:.3f}")
 print(f"                 FP Rate: {FP_rate:.3f}")
 print(f"                 Precision: {precision:.3f}")

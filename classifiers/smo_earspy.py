@@ -17,7 +17,7 @@ except FileNotFoundError:
 # Convert ARFF data to a Pandas DataFrame
 df = pd.DataFrame(data)
 
-# Ensure proper encoding of nominal attributes (if necessary)
+# Ensure proper encoding of nominal attributes
 for column in df.select_dtypes([object]).columns:
     df[column] = df[column].str.decode('utf-8')
 
@@ -52,19 +52,19 @@ y = y[X_numeric.index]
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X_numeric)
 
-# Initialize the SMO (SVM) classifier with Weka-equivalent settings
+# Initialize the SMO (SVM) classifier
 smo_classifier = SVC(
-    kernel='rbf',           # Default kernel in Weka's SMO is RBF (Gaussian)
-    C=1.0,                  # Regularization parameter (default in Weka)
-    probability=True,       # Enable probability estimates for ROC/PRC calculation
-    random_state=1          # Consistent with Weka (-S 1)
+    kernel='rbf',
+    C=1.0,
+    probability=True,
+    random_state=1
 )
 
 # Perform 10-fold cross-validation and get predictions for all data points
 cv_splitter = StratifiedKFold(n_splits=10, shuffle=True, random_state=1)
 y_pred = cross_val_predict(smo_classifier, X_scaled, y, cv=cv_splitter)
 
-# Train a model for probability estimates (needed for ROC/PRC calculation)
+# Train a model for probability estimates
 smo_classifier.fit(X_scaled, y)
 y_prob = smo_classifier.predict_proba(X_scaled)[:, 1] if len(np.unique(y)) == 2 else None
 
@@ -85,7 +85,7 @@ FP = conf_matrix[0, 1] if conf_matrix.shape[0] > 1 else 0  # False Positives for
 TN = conf_matrix[0, 0] if conf_matrix.shape[0] > 1 else conf_matrix[0][0]  # True Negatives for negative class or single-class case
 FN = conf_matrix[1, 0] if conf_matrix.shape[0] > 1 else 0  # False Negatives for positive class
 
-# Calculate metrics for Weka-like output format
+# Calculate metrics
 TP_rate = TP / (TP + FN) if (TP + FN) > 0 else 0  # True Positive Rate (Recall)
 FP_rate = FP / (FP + TN) if (FP + TN) > 0 else 0  # False Positive Rate
 precision = TP / (TP + FP) if (TP + FP) > 0 else 0
