@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[401]:
+
 
 
 import pandas as pd
@@ -10,47 +10,22 @@ import numpy as np
 df = pd.read_csv('9t_rls.csv', header=None, names=['smean', 'smax', 'smin', 'std_dev', 'variance','range','cv','skewness','kurtosis','q25','q50','q75','mean_crossing_rate','power','entropy','frequency_ratio','irrk','irrj','sharpness','smoothness','specCentroid','specstddev','specCrest','specSkewness','specKurt','maxfreq','class'])
 
 
-# In[402]:
-
-
-df.tail()
-
-
-# In[403]:
-
 
 df['labels'] =df['class'].astype('category').cat.codes
 
 
-# In[ ]:
-
-
-
-
-
-# In[404]:
 
 
 df=df.drop(['sharpness'], axis='columns')
 
 
-# In[ ]:
-
-
-
-
-
-# In[405]:
-
-
-df.tail()
 
 
 # Start preprocess
 
 # Preprocessing Test
 
-# In[406]:
+
 
 
 #df['smean'] = df['smean']/df['smean'].max()
@@ -59,29 +34,19 @@ df.tail()
 #df['smax'] = (df['smax']-df['smax'].mean())/df['smax'].std()
 
 
-# In[407]:
-
-
-df.head()
-
-
-# In[408]:
-
-
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from sklearn import preprocessing
 from tensorflow import keras
 
 
-# In[409]:
+
 
 
 #Some Preprocessing TEST
 #clipping test
 
 
-# In[410]:
 
 
 X = df[['smean', 'smax', 'smin', 'std_dev', 'variance','range','cv','skewness','kurtosis','q25','q50','q75','mean_crossing_rate','power','entropy','frequency_ratio','irrk','irrj','smoothness','specCentroid','specstddev','specCrest','specSkewness','specKurt','maxfreq']]
@@ -89,19 +54,18 @@ Y = df['labels']
 x_train, x_test, y_train, y_test = train_test_split(np.asarray(X), np.asarray(Y), test_size=0.2, shuffle= True)
 
 
-# In[411]:
+
 
 
 print(x_train)
 
 
-# In[412]:
 
 
 print(x_test.shape)
 
 
-# In[413]:
+
 
 
 # The known number of output classes.
@@ -125,7 +89,7 @@ x_train = x_train.reshape(x_train.shape[0],25,1)
 x_test = x_test.reshape(x_test.shape[0],25,1)
 
 
-# In[414]:
+
 
 
 mean = np.mean(x_train, axis=0)
@@ -168,19 +132,18 @@ x_test = (x_test - mean)/std
 #x_train[150:160]
 
 
-# In[415]:
 
 
 print(x_train.shape)
 
 
-# In[416]:
+
 
 
 print(np.any(np.isnan(x_train)))
 
 
-# In[417]:
+
 
 
 from __future__ import print_function    
@@ -197,7 +160,6 @@ from tensorflow.keras import backend as K
 from tensorflow.keras.optimizers import Adam
 
 
-# In[418]:
 
 
 # Check for NaN values
@@ -213,7 +175,7 @@ else:
     print("Input data does not contain infinite values.")
 
 
-# In[419]:
+
 
 
 # Replace NaN values with 0
@@ -221,7 +183,6 @@ x_train = np.nan_to_num(x_train, nan=0.0, posinf=0.0, neginf=0.0)
 x_test = np.nan_to_num(x_test, nan=0.0, posinf=0.0, neginf=0.0)
 
 
-# In[420]:
 
 
 nan_indices_train = np.where(np.isnan(x_train))
@@ -242,13 +203,13 @@ if len(nan_indices_val[0]) > 0:
         print("Index:", index, "Value:", value)
 
 
-# In[421]:
+
 
 
 print(x_train.shape)
 
 
-# In[422]:
+
 
 
 model = Sequential()
@@ -280,14 +241,13 @@ opt = keras.optimizers.Adam(lr=0.0001)
 #model.summary()
 
 
-# In[423]:
+
 
 
 model.compile(loss='categorical_crossentropy', optimizer=opt ,metrics=['accuracy'])
 #model.summary()
 
 
-# In[424]:
 
 
 #print(x_test.shape)
@@ -295,13 +255,13 @@ model.compile(loss='categorical_crossentropy', optimizer=opt ,metrics=['accuracy
 model.summary()
 
 
-# In[425]:
+
 
 
 #print(y_test)
 
 
-# In[426]:
+
 
 
 batch_size = 64
@@ -314,7 +274,7 @@ history=model.fit(x_train, y_train_binary,
           validation_split=0.1)
 
 
-# In[427]:
+
 
 
 predictions = model.predict(x_test)
@@ -325,7 +285,7 @@ print ("Loss = " + str(preds[0]))
 print ("Test Accuracy = " + str(preds[1]))
 
 
-# In[428]:
+# Drawing Confusion matrix
 
 
 from sklearn.metrics import confusion_matrix
@@ -341,7 +301,7 @@ conf_matrix=confusion_matrix(np.argmax(y_test_binary,axis=1),np.argmax(predictio
 print(conf_matrix)
 
 
-# In[429]:
+# Drawing Loss Graphs
 
 
 plt.rcParams.update({'font.size': 18})
@@ -356,7 +316,7 @@ plt.legend(['Training', 'Validation'], loc='upper right')
 plt.show()
 
 
-# In[430]:
+# Drawing Training Accuracy vs. vallidation accuarcy
 
 
 plt.plot(history.history['accuracy'])
@@ -368,19 +328,7 @@ plt.legend(['Training', 'validation'], loc='lower right')
 plt.show()
 
 
-# In[ ]:
 
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
 
 
 
